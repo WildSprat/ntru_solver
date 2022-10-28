@@ -13,7 +13,7 @@ This repository contains the scripts accompanying the article
 
 * [fpylll](https://github.com/fplll/fpylll)
 * [g6k](https://github.com/fplll/g6k)
-* [SageMath 9.3+](https://www.sagemath.org/)
+* [SageMath 9.3+](https://www.sagemath.org/) (required only if one wants to solve [NTRU Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf))
 
 
 # Description of files
@@ -45,7 +45,9 @@ To attack an NTRU-HPS instance over x^121 - 1 with q=512 run
 ```
 python ./attack_ntru.py HPS 121 -q=512 --alg_bkz=pump_n_jump --verbose=True
 ```
-It takes approximately TODO on a laptop
+It takes approximately 1h30 on a laptop to find a shortest vector.
+
+
 
 
 TODO: describe the command for the plots
