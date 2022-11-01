@@ -2,17 +2,14 @@
 Solving NTRU with lattice reduction
 This repository contains the scripts accompanying the article
 
-**Cyclotomic Ring, Almost-Parallel Hints, and Sieving for NTRU Attacks**
+**Attacking NTRU: Cyclotomic Ring,Almost-Parallel Hints, and Sieving**
 
-
-//# Contributers
-//* anonymous
 
 # Requirements
 
 * [fpylll](https://github.com/fplll/fpylll)
 * [g6k](https://github.com/fplll/g6k)
-* [SageMath 9.3+](https://www.sagemath.org/) (required only if one wants to solve [NTRU Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf))
+* [SageMath 9.3+](https://www.sagemath.org/) (required only if one wants to use either of the lattices types {classic_slice,phi_projected_slice, challenge} to solve [NTRU Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf))
 
 
 # Description of files
@@ -24,6 +21,10 @@ Short description of the content:
 * `post_processing.py` post-processes the shortest vector found during the reduction
 * `utils.py` contains helping functions
 * `dual_basis.sage` computes the dual basis
+* folder `gso_dumps` contains GSOs of dumped bases during the reduction for HPS and HRSS experiments (see Figures 1 and 3 in the accompanying paper). The file names are of the form
+`n_${n}_${lattype}_b_${beta}_seed${seed}`, e.g. `n_121_lattype_phi_projected_b_2_seed8494989096862686174`.
+In particular, one can recreate Figure 2 using the content of `gso_dumps/HRSS/phi_projected/201`
+* `seeds.txt` contains seeds to recrate Figures 1 and 3
 
 
 # How to use
@@ -90,5 +91,26 @@ python ./attack_ntru.py HPS 121 -q=512 --alg_bkz=pump_n_jump --verbose=True
 ```
 It takes approximately 1h30 on a laptop to find a shortest vector.
 
+To create the black dots from Figure 1 (NTRU-HRSS), we run the following command (for each n from the set {101, 111, 121, 131, 141, 151, 161, 171}) with 20 parallel runs starting with seed=14498356423527637276, e.g. for n=151:
+```
+python ./attack_ntru.py HRSS 151 --lattice_type='classic' --bkz_betas=20:50:1 --seed=14498356423527637276 --verbose=True --dump=True --workers=20 --trials=32
+```
 
-TODO: describe the command for the plots
+For larger n's, e.g. n=171, we used sieving (hense --alg_bkz=pump_n_jump) in parallel (--threads=10) for betas>=65 and for preprocessing with enumation for smaller beta:
+```
+python ./attack_ntru.py HRSS 171 --lattice_type='classic' --bkz_pre_beta=64 --bkz_betas=65:70:1 --seed=14498356423527637276 --verbose=True --dump=True --threads=10 --workers=20 --trials=32
+```
+
+To create blue squares (phi_projected lattice) we run for e.g. n=191:
+```
+python ./attack_ntru.py HRSS 191 --lattice_type='phi_projected' --bkz_pre_beta=64 --bkz_betas=65:90:1 --seed=2584232668076212209 --verbose=True --dump=True --threads=20 --workers=10 --trials=20
+```
+
+To experiments on HPS parameters one needs to provide the modulus q as well, e.g.
+```
+python ./attack_ntru.py HPS 161 -q=512 --lattice_type='phi_projected' --bkz_pre_beta=64 --bkz_betas=65:110:1 --seed=8550301121086457479 --verbose=True --dump=True --threads=20 --workers=10 --trials=32
+```
+recreates the blue square corresponding to n=161 on Figure 3.
+
+
+The seeds for all dimensions can be found in seeds.txt
