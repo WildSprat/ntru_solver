@@ -13,8 +13,12 @@ import matplotlib.pyplot as plt
 from fpylll.util import gaussian_heuristic
 from fpylll import IntegerMatrix
 
+import warnings
+
+
 
 max_beta = 150 # maximal dimension we run SVP in
+cross_over_beta = 70
 
 def remove_zeros(B):
     """
@@ -142,10 +146,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Parse NTRU attack params.')
 
     #main parameters
-    parser.add_argument('ntru_type', type=str, help="HRSS or HPS")
+    parser.add_argument('ntru_type', type=str, help="HRSS or HPS or C")
     parser.add_argument('n', type=int,  help="ring dimension")
     parser.add_argument('-q', type=int, dest="q", default=None, help="NTRU modulus")
-    parser.add_argument('--lattice_type', dest="lattice_type", default="phi_projected", help="{classic, classic_slice,phi, phi_projected, phi_projected_slice, phi_one,challenge}")
+    parser.add_argument('--lattice_type', dest="lattice_type", default="phi_projected", help="{classic, classic_slice,phi, phi_projected, phi_projected_slice, phi_one, challenge}")
     parser.add_argument('--nsamples', type=int, default=None, dest="nsamples", help="Number of samples/rows of rot(h) used")
     parser.add_argument('--seed',  type=int, dest="seed", default=None, help="randomness seed")
     parser.add_argument('--pseudoinverse',   dest="pseudoinverse", default=False, help="If True, use pseudoinverse of h")
@@ -183,7 +187,7 @@ def parse_args():
 
     # other
     parser.add_argument('--check_in_preprocessing', dest='check_in_preprocessing', default=False, help='check for SKR during the preprocessing phase or not')
-    parser.add_argument('--sage', dest='sage', default=None, help="command to run sage on your machine. only necessary, when using a sliced lattice")
+    parser.add_argument('--sage', dest='sage', default='sage', help="command to run sage on your machine. only necessary, when using a sliced lattice")
     parser.add_argument('--hybrid', dest="hybrid", type=int, default=0, help='0 - no hybrid, 1 - plain hybrid, 2 - mitm hybrid. 1 and 2 require integer paramters r and k')
     parser.add_argument('--k', dest="k", type=int, default=0, help='number of guessed dimensions. Should be even for mitm hybrid')
     parser.add_argument('--r', dest="r", type=int, default=0, help='number of q-ary vectors we throw away in hybrid')
@@ -215,20 +219,26 @@ def parse_args():
 
 def check_parsed_params(params):
 
-    if not params['ntru_type'] in ["HRSS", "HPS"]:
+    if not params['ntru_type'] in ["HRSS", "HPS", "C"]:
         raise ValueError("ntru_type=%s not recognized." % params['ntru_type'])
 
     if params['ntru_type']=="HPS" and params['q']==None:
         raise ValueError("Provide q for NTRU HPS!")
     elif params['ntru_type']=="HRSS": params['q'] = obtain_hrss_q_from_n(params['n'])
 
-    if not params['lattice_type'] in ["classic", "classic_slice", "phi", "phi_projected", "phi_projected_slice", "phi_one", "random","challenge"]:
+    if params['ntru_type']=="C" and params['q']==None:
+        raise ValueError("Provide q for NTRU Challenge!")
+
+    if params['ntru_type']=="C" and params['h']==None:
+        raise ValueError("Provide h for NTRU Challenge!")
+
+    if not params['lattice_type'] in ["classic", "classic_slice", "phi", "phi_projected", "phi_projected_slice", "phi_one", "random, challenge"]:
         raise ValueError("lattice_type=%s not recognized." % params['lattice_type'])
 
     if params['nsamples']==None: params['nsamples'] = params['n']
     else: assert(params['nsamples'] > 0 and params['nsamples']<=params['n'])
 
-    if not params['algbkz'] in ["fpylll", "naive", "pump_n_jump", "slide"]:
+    if not params['algbkz'] in ["fpylll", "pump_n_jump"]:
         raise ValueError("algbkz=%s not recognized." % params['algbkz'])
 
     if params['pseudoinverse'] and params['ntru_type']=="HRSS":
@@ -256,6 +266,9 @@ def check_parsed_params(params):
     if params['seed']==None:
         params['seed'] = randint(0, 2**64)
 
+    # warn the caller is the choice of (bkz_alg, beta) is not optimal
+    if (cross_over_beta in params['blocksizes']) and params['algbkz']=="fpylll":
+        warnings.warn("Warning: enumeration in blocksizes" + str(params['blocksizes']) + 'will be slow. Run --bkz_alg="pump_n_jump" instead')
 
     if not int(params['hybrid']) in [0,1,2]:
         raise ValueError("unrecognized value for --hybrid. It can only be 0,1,2")

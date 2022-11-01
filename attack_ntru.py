@@ -69,7 +69,7 @@ class NTRUAttack:
 	def __init__(self, params):
 		self.n             = params['n']				# defines NTRU ring x^n - 1
 		self.ntru_type     = params['ntru_type']		# HPS or HRSS
-		self.q             = params['q']				# modulus (relevant for HPS)
+		self.q             = params['q']				# modulus (relevant for HPS, Challenge)
 		self.lattice_type  = params['lattice_type']		# {classic, classic_slice,phi, phi_projected, phi_projected_slice, phi_one,challenge}
 		self.nsamples      = params['nsamples']			# number of NTRU samples
 		self.seed          = params['seed']				# NTRU key seed
@@ -188,9 +188,9 @@ class NTRUAttack:
 		self.B   = self.M_.B
 		self.dim = self.B.nrows
 
-		self.foundSubLattice = False		# save blocksize when DSD happend
-		self.blocksizeSubLattice = 0		# save blocksize when SRK happend
-		self.blocksizeSecretKey = 0			# save blocksize when hybrid was succesful
+		self.foundSubLattice = False		#
+		self.blocksizeSubLattice = 0		# save blocksize when DSD happend
+		self.blocksizeSecretKey = 0			# save blocksize when SKR happend
 
 
 	def __call__(self):
@@ -340,6 +340,8 @@ class NTRUAttack:
 		"""
 		Check for the secret key recovery
 		"""
+		if self.verbose:
+			print("Checking SKR", v)
 
 		sqNorm = sum( v_i**2 for v_i in v )
 		return sqNorm <= self.len_threshold
