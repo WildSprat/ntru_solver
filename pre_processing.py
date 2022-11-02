@@ -7,7 +7,8 @@ import json
 
 def dual(basis,sage):
   """
-  computes the dual of the basis.
+  Computes the dual of the basis and scales it,
+  such that it is integral.
   (!) calles sage internally
   We do not know how to easily avoid usage of sage here
   """
@@ -33,6 +34,10 @@ def dual(basis,sage):
   return basis
 
 def swapLeftRight(basis):
+  """
+    On input of a basis matrix B = (B_1||B_2),
+    this function computes (B_2||B_1).
+  """
 	d = int( len(basis[0]) /2)
 
 	for i in range(len(basis)):
@@ -44,6 +49,12 @@ def swapLeftRight(basis):
 	return basis
 
 def projection(basis, projectLeft):
+  """
+    On input of a basis matrix B = (B_1||B_2) and projectLeft = True,
+    this function projects B_1 orthogonally against the all one vector.
+    Then scales the matrix, such that it is integral.
+    If projectLeft = False, then the projection is applied to B_2.
+  """
 	d = int( len(basis[0]) /2)
 
 	if not projectLeft:
@@ -67,6 +78,9 @@ def projection(basis, projectLeft):
 	return basis
 
 def removeLinearDependencies(basis):
+  """
+    Removes linear dependencies using LLL:
+  """
   d = len( basis[0] )
   B = IntegerMatrix(d, d)
   B.set_matrix(basis)
@@ -81,6 +95,14 @@ def removeLinearDependencies(basis):
   return basis
 
 def sliceBasis(basis,sage,projectLeft=True):
+  """
+    On input of a basis matrix for
+    the Coppersmith-Shamir lattice (lattype=classic) or
+    the projected cylcotomic lattice (lattype=phi_projected),
+    this function computes a basis for the lattices with additional hints by design,
+    i.e., classic_slive or phi_projected_slice
+    as introduced in Section 5.3. of our paper.
+  """
   basis = dual(basis,sage)
   basis = projection(basis,projectLeft)
   basis = removeLinearDependencies(basis)
@@ -88,6 +110,13 @@ def sliceBasis(basis,sage,projectLeft=True):
   return basis
 
 def projectAgainstOne(basis):
+  """
+    On input of a basis matrix for
+    the clcotomic lattice (lattype=phi),
+    this function computes a basis for
+    the projected cylotomic lattice (lattype=phi_projceted).
+    Then scales the matrix, such that it is integral.
+  """
   nRows = len(basis)
   d = int( len(basis[0]) / 2)
   ones = np.array( d*[1] )
@@ -108,6 +137,10 @@ def projectAgainstOne(basis):
   return basis
 
 def challenge(basis, sage):
+  """
+    Pre-processing for lattices as in the NTRU-Challenges
+    by Security Innovation, Inc.
+  """
 	d = int( len(basis) / 2 )
 
 	h = basis[d][:d]
