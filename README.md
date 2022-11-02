@@ -32,7 +32,7 @@ In particular, one can recreate Figure 2 using the content of `gso_dumps/HRSS/ph
 
 Run `attack_ntru.py` with the following parameters
 
-* {HRSS, HPS, C} : NTRU type as per [NIST 3rd Round Specification document](https://ntru.org/f/ntru-20190330.pdf) or as per NTRU Challenge from [NTRU Securty Innovation Inc.](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf) Obligatory parameter
+* {HRSS, HPS, C} : NTRU type as per [NIST 3rd Round Specification document](https://ntru.org/f/ntru-20190330.pdf) or as per NTRU Challenge from [Securty Innovation Inc.](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf) Obligatory parameter
 * `n` : defines NTRU ring x^n - 1. Integer. Obligatory parameter
 * `-q`: NTRU modulus
 * `--lattice_type` :  either of the following lattices {classic, classic_slice,phi, phi_projected, phi_projected_slice, challenge}
@@ -92,7 +92,7 @@ python attack_ntru.py HPS 121 -q=512 --alg_bkz=pump_n_jump --verbose=True
 ```
 It takes approximately 1h30 on a laptop to find a shortest vector.
 
-To create the black dots from Figure 1 (NTRU-HRSS), we run the following command (for each n from the set {101, 111, 121, 131, 141, 151, 161, 171}) with 20 parallel runs starting with seed=14498356423527637276, e.g. for n=151:
+To recreate the black dots from Figure 1 (NTRU-HRSS), we run the following command (for each n from the set {101, 111, 121, 131, 141, 151, 161, 171}) with 20 parallel runs starting with seed=14498356423527637276, e.g. for n=151:
 ```
 python attack_ntru.py HRSS 151 --lattice_type='classic' --bkz_betas=20:50:1 --seed=14498356423527637276 --verbose=True --dump=True --workers=20 --trials=32
 ```
@@ -102,7 +102,7 @@ For larger n's, e.g. n=171, we used sieving (hense --alg_bkz=pump_n_jump) in par
 python attack_ntru.py HRSS 171 --lattice_type='classic' --bkz_pre_beta=64 --bkz_betas=65:70:1 --seed=14498356423527637276 --verbose=True --dump=True --threads=10 --workers=20 --trials=32
 ```
 
-To create blue squares (phi_projected lattice) we run for e.g. n=191:
+To recreate blue squares (phi_projected lattice) we run for e.g. n=191:
 ```
 python attack_ntru.py HRSS 191 --lattice_type='phi_projected' --bkz_pre_beta=64 --bkz_betas=65:90:1 --seed=2584232668076212209 --verbose=True --dump=True --threads=20 --workers=10 --trials=20
 ```
@@ -115,7 +115,7 @@ recreates the blue square corresponding to n=161 in Figure 3.
 
 The seeds for all dimensions can be found in seeds.txt
 
-Our implementation as input NTRU Challenges from [NTRU Securty Innovation Inc.](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf). Add NTRU type `C`, `--h` option to include the public key provided by the challenges, and `--lattice_type=challenge` like so
+To attack NTRU Challenges from [Security Innovation Inc.](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf) add NTRU type `C`, `--h` option to include the public key provided by the challenges, and `--lattice_type=challenge` like so
 ```
 python attack_ntru.py C 113 -q=1024 --verbose=True --threads=256 --bkz_alg=pump_n_jump  --lattice_type=challenge --dump=True --h="[1021, 344, 107, 401, 913, 817, 980, 271, 512, 110, 957, 736, 920, 275, 807, 210, 41, 65, 280, 161, 588, 561, 312, 252, 472, 158, 999, 963, 906, 519, 40, 447, 885, 970, 1015, 234, 534, 512, 47, 899, 630, 654, 548, 113, 410, 798, 908, 758, 443, 44, 690, 380, 672, 143, 732, 142, 191, 129, 97, 606, 993, 944, 399, 138, 260, 745, 561, 428, 813, 459, 853, 604, 990, 813, 533, 37, 334, 143, 601, 389, 473, 713, 770, 7, 641, 246, 417, 782, 731, 562, 908, 789, 285, 320, 534, 271, 676, 1, 813, 788, 462, 169, 634, 986, 592, 168, 110, 648, 310, 502, 946, 1001, 772]"
 ```
