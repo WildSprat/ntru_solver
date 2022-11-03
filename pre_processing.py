@@ -38,15 +38,15 @@ def swapLeftRight(basis):
     On input of a basis matrix B = (B_1||B_2),
     this function computes (B_2||B_1).
   """
-	d = int( len(basis[0]) /2)
+  d = int( len(basis[0]) /2)
 
-	for i in range(len(basis)):
+  for i in range(len(basis)):
 
-		left = basis[i][:d]
-		right = basis[i][d:]
-		basis[i] = right + left
+    left = basis[i][:d]
+    right = basis[i][d:]
+    basis[i] = right + left
 
-	return basis
+  return basis
 
 def projection(basis, projectLeft):
   """
@@ -55,27 +55,27 @@ def projection(basis, projectLeft):
     Then scales the matrix, such that it is integral.
     If projectLeft = False, then the projection is applied to B_2.
   """
-	d = int( len(basis[0]) /2)
+  d = int( len(basis[0]) /2)
 
-	if not projectLeft:
-		basis = swapLeftRight(basis)
+  if not projectLeft:
+    basis = swapLeftRight(basis)
 
-	for i, v in enumerate(basis):
-		v_left = v[:d]
-		v_right = v[d:]
+  for i, v in enumerate(basis):
+    v_left = v[:d]
+    v_right = v[d:]
 
-		sum_left = sum(v_left)
+    sum_left = sum(v_left)
 
-		for j in range(d):
-			v_left[j] = d*v_left[j] - sum_left
-			v_right[j] = d*v_right[j]
+    for j in range(d):
+      v_left[j] = d*v_left[j] - sum_left
+      v_right[j] = d*v_right[j]
 
-		basis[i] = v_left + v_right
+    basis[i] = v_left + v_right
 
-	if not projectLeft:
-		basis = swapLeftRight(basis)
+  if not projectLeft:
+    basis = swapLeftRight(basis)
 
-	return basis
+  return basis
 
 def removeLinearDependencies(basis):
   """
@@ -141,29 +141,29 @@ def challenge(basis, sage):
     Pre-processing for lattices as in the NTRU-Challenges
     by Security Innovation, Inc.
   """
-	d = int( len(basis) / 2 )
+  d = int( len(basis) / 2 )
 
-	h = basis[d][:d]
+  h = basis[d][:d]
 
-	for i in range( d ):
-		for j in range( d ):
-			basis[d+i][j] *= 3
+  for i in range( d ):
+    for j in range( d ):
+      basis[d+i][j] *= 3
 
 
-	basis = sliceBasis(basis,sage,projectLeft=False)
+  basis = sliceBasis(basis,sage,projectLeft=False)
 
-	def inner(v):
-		return sum( [ v[i]*h[i] for i in range(len(h)) ] )
+  def inner(v):
+    return sum( [ v[i]*h[i] for i in range(len(h)) ] )
 
-	sqNorm = inner(h)
-	for i in range(len(basis)):
-		b = basis[i]
-		b_left = b[:d]
-		b_right = b[d:]
+  sqNorm = inner(h)
+  for i in range(len(basis)):
+    b = basis[i]
+    b_left = b[:d]
+    b_right = b[d:]
 
-		b_left = sqNorm*np.array( b_left ) - inner(b)*np.array( h )
-		b_right = sqNorm*np.array( b_right )
+    b_left = sqNorm*np.array( b_left ) - inner(b)*np.array( h )
+    b_right = sqNorm*np.array( b_right )
 
-		basis[i] = b_left.tolist() + b_right.tolist()
+    basis[i] = b_left.tolist() + b_right.tolist()
 
-	return basis
+  return basis
