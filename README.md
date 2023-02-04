@@ -21,11 +21,11 @@ Short description of the content:
 * `post_processing.py` post-processes the shortest vector found during the reduction
 * `utils.py` contains helping functions
 * `dual_basis.sage` computes the dual basis. Scales the basis such that it is integral
-* folder `gso_dumps` contains GSOs of dumped bases during the reduction for HPS and HRSS experiments (see Figures 1 and 3 in the accompanying paper). The file names are of the form
+* folder `gso_dumps` contains GSOs of dumped bases during the reduction for HPS and HRSS experiments (see Figures 1 and 2 in the accompanying paper). The file names are of the form
 `n_${n}_${lattype}_b_${beta}_seed${seed}`, e.g. `n_121_lattype_phi_projected_b_2_seed8494989096862686174`.
-In particular, one can recreate Figure 2 using the content of `gso_dumps/HRSS/phi_projected/201`
-* `seeds.txt` contains seeds to recreate Figures 1 and 3
-* `fit.sage ` interpolates the lines for Figures 1 and 3
+* `seeds.txt` contains seeds to recreate Figures 1 and 2
+* `fit.sage ` interpolates the lines for Figures 1 and 2
+* `challenge181.sage` verifies the solution for the [NTRU-181 Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf)) that we found
 
 
 # How to use
