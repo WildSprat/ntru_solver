@@ -25,7 +25,7 @@ Short description of the content:
 `n_${n}_${lattype}_b_${beta}_seed${seed}`, e.g. `n_121_lattype_phi_projected_b_2_seed8494989096862686174`.
 * `seeds.txt` contains seeds to recreate Figures 1 and 2
 * `fit.sage ` interpolates the lines for Figures 1 and 2
-* `challenge181.sage` verifies the solution for the [NTRU-181 Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf)) that we found
+* `challenge181.sage` verifies the solution for the [NTRU-181 Challenges](https://web.archive.org/web/20160310141551/https://www.securityinnovation.com/uploads/ntru-challenge-parameter-sets-and-public-keys-new.pdf) that we found
 
 
 # How to use
